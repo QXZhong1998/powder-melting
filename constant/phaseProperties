@@ -1,0 +1,102 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2012                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      phaseProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+type    massTransferMultiphaseSystem;
+
+phases  (solid liquid gas);
+
+liquid
+{
+    type            pureMovingPhaseModel;
+}
+
+solid
+{
+    type            pureStaticSolidPhaseModel;
+}
+
+gas
+{
+    type            pureMovingPhaseModel;
+}
+
+interfacePorous
+(
+    (solid and liquid)
+    {
+        type            VollerPrakash;
+        solidPhase      alpha.solid;
+        Cu              1.5e6;
+    }
+);
+
+massTransferModel
+(
+    (solid to liquid)
+    {
+        type            Lee;
+        C               3.25e6;
+        Tactivate       1928;
+    }
+    /*(liquid to solid)
+    {
+        type            Lee;
+        C               -0.5e6;
+        Tactivate       1873;
+    }*/
+    /*(liquid to gas)
+    {
+        type            kineticGasEvaporation;
+	species         vapour.gas;
+        C               0.1;
+        Tactivate       3133;
+	isoAlpha	0.1;
+	//alphaMin	0.1;
+    }*/
+);
+
+/*surfacceTension
+(
+   (liquid and solid)
+   {
+	type            constant;
+        sigma           0.00;
+   }
+  
+   (gas and liquid)
+    {
+        sigma
+        {
+            type            temperatureDependent;
+            sigma           table
+            (
+                (200 0.02)
+                (300 0.01)
+                (400 0.0)
+                (1300 0.0)
+                (10000 0.0)
+             
+            );
+        }
+    }
+
+   (gas and solid)
+    {
+        type            constant;
+        sigma           0.00;
+    }
+);*/
+// ************************************************************************* //
